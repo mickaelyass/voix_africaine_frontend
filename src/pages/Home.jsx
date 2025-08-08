@@ -26,7 +26,7 @@ const Home = () => {
         };
     
         fetchLivres();
-      }, []);
+      }, [API_URL]);
   return (
     <main className="flex-1">
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

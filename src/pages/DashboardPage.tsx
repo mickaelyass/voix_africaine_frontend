@@ -90,8 +90,8 @@ export default function DashboardPage() {
               <p className="text-gray-600">© 2023 Votre Application. Tous droits réservés.</p>
             </div>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-600 hover:text-gray-900">Mentions légales</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">Contact</a>
+              <button className="text-gray-600 hover:text-gray-900">Mentions légales</button>
+              <button className="text-gray-600 hover:text-gray-900">Contact</button>
             </div>
           </div>
         </div>

@@ -36,7 +36,7 @@ const AjoutChapitre = () => {
           created_by: user?.id || "",
 
         };
-        const response = await axios.post(`${API_URL}/chapitres`, dataToSend, {
+        await axios.post(`${API_URL}/chapitres`, dataToSend, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

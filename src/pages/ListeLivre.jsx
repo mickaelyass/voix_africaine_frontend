@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import LivreCard from '../components/livres/LivreCard';
 import { useNavigate } from 'react-router-dom';
@@ -26,20 +26,20 @@ const ListeLivre = () => {
   
 };
 
-const fetchLivres = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/livres/public/`);
-        setLivres(res.data);
-      } catch (err) {
-        console.error('Erreur de chargement :', err);
-      }
-    };
+const fetchLivres = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/livres/public/`);
+      setLivres(res.data);
+    } catch (err) {
+      console.error('Erreur de chargement :', err);
+    }
+  }, [API_URL]);
 
   useEffect(() => {
     
 
     fetchLivres();
-  }, []);
+  }, [fetchLivres]);
 
   return (
     <div className="p-6">

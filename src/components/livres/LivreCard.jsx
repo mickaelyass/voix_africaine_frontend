@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/AuthContext';
 const LivreCard = ({ livre, onDelete }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const token = localStorage.getItem('access_token');
   const goToDetail = () => {
     navigate(`/dashboard/livre/${livre.id}`);
   };

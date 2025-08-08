@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,31 +11,31 @@ const LivreDetail = () => {
   const [chapitres, setChapitres] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('access_token');
-  const fetchLivre = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/livres/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLivre(res.data);
-      } catch (error) {
-        console.error('Erreur lors de la récupération du livre :', error);
-      }
-    };
+  const fetchLivre = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/livres/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setLivre(res.data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération du livre :', error);
+    }
+  }, [id, token,API_URL]);
 
-    const fetchChapitres = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/chapitres/livre/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setChapitres(res.data);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des chapitres :', error);
-      }
-    };
+  const fetchChapitres = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/chapitres/livre/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setChapitres(res.data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des chapitres :', error);
+    }
+  }, [id, token,API_URL]);
 
      const deleteChapitre = async (chapitreId) => {
     if (!window.confirm("Confirmer la suppression de ce chapitre ?")) return;
@@ -53,7 +53,7 @@ const LivreDetail = () => {
   useEffect(() => {
     fetchLivre();
     fetchChapitres();
-  }, [id,fetchChapitres, fetchLivre]);
+  }, [fetchChapitres, fetchLivre]);
 
 
   const toggleChapitrePublic = async (chapitreId) => {
