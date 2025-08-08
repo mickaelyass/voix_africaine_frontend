@@ -28,10 +28,18 @@ export const login = async (credentials: {
 
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${API_URL}/auth/me`);  // Notez /auth/me et non /auth/users/me
+    const token = localStorage.getItem('access_token');
+    if (!token) throw new Error("No token");
+
+    const response = await axios.get(`${API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     localStorage.removeItem('access_token');
     return null;
   }
 };
+
