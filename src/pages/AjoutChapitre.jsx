@@ -30,7 +30,6 @@ const AjoutChapitre = () => {
         const dataToSend = {
           ...values,
           livre_id: livreId,
-          is_public:"true",
           audio_url: "",
           is_public: "True",
           duration_sec: 1,

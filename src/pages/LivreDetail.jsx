@@ -53,7 +53,7 @@ const LivreDetail = () => {
   useEffect(() => {
     fetchLivre();
     fetchChapitres();
-  }, [id]);
+  }, [id,fetchChapitres, fetchLivre]);
 
 
   const toggleChapitrePublic = async (chapitreId) => {

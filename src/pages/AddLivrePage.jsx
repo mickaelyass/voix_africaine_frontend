@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LivreForm from '../components/livres/LivreForm';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
@@ -28,12 +28,12 @@ const AddLivrePage = () => {
             const api = axios.create({
         baseURL: API_URL,
         });
-      const response = await api.post('/livres', dataToSend, {
+     await api.post('/livres', dataToSend, {
          headers: {
         Authorization: `Bearer ${token}`
       }
       });
-
+  
       // Afficher un message de succès
       
       alert('Livre créé avec succès!');
