@@ -25,10 +25,8 @@ const AddLivrePage = () => {
         ...livreData,
         created_by: user?.id // Ajoutez l'ID de l'utilisateur
       };
-            const api = axios.create({
-        baseURL: API_URL,
-        });
-     await api.post('/livres', dataToSend, {
+          
+     await axios.post(`${API_URL}/livres`, dataToSend, {
          headers: {
         Authorization: `Bearer ${token}`
       }
