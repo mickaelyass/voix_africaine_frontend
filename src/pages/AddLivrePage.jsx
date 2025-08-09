@@ -25,7 +25,7 @@ const AddLivrePage = () => {
         ...livreData,
         created_by: user?.id // Ajoutez l'ID de l'utilisateur
       };
-          
+    console.log("API_URL depuis Netlify build:", process.env.REACT_APP_API_URL);   
      await axios.post(`${API_URL}/livres`, dataToSend, {
          headers: {
         Authorization: `Bearer ${token}`
@@ -40,6 +40,7 @@ const AddLivrePage = () => {
       /* navigate(`/livres/${response.data.id}`); */
       
     } catch (error) {
+     
       console.error('Erreur lors de la création du livre:', error);
       setError(
         error.response?.data?.detail || 
