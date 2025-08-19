@@ -1,9 +1,10 @@
 import { Outlet } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth()
-
+ const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Layout avec sidebar et content */}
@@ -25,20 +26,7 @@ export default function DashboardPage() {
                   Livres publics
                 </a>
               </li>
-             {/*  <li>
-                <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
-                  Mes livres
-                </a>
-              </li> */}
-             {/*  {user?.role === 'admin' && (
-                
-                <li>
-                  <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
-                    Administration
-                  </a>
-                </li>
-                
-              )} */}
+           
               {user?.role === 'admin' && (
                 
                 <li>
@@ -68,14 +56,74 @@ export default function DashboardPage() {
           </header>
 
           {/* Mobile menu button (visible seulement sur mobile) */}
-          <div className="md:hidden bg-white p-4 shadow flex justify-between items-center">
-            <h1 className="text-xl font-bold text-gray-900">Menu</h1>
-            <button className="p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
+          <div>
+      {/* Mobile menu button (visible seulement sur mobile) */}
+      <div className="md:hidden bg-white p-4 shadow flex justify-between items-center">
+        <h1 className="text-xl font-bold text-gray-900">Menu</h1>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100"
+        >
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Overlay clic pour fermer */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-40"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <nav
+        className={`fixed top-0 left-0 h-full w-56 bg-white shadow-lg p-4 transform transition-transform duration-300 z-50
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <h2 className="text-xl p-4 font-semibold">Menu</h2>
+        <ul className="space-y-2">
+          <li>
+            <a
+              href="/dashboard"
+              className="block px-4 py-2 text-gray-700 bg-blue-50 rounded font-medium"
+            >
+              Tableau de bord
+            </a>
+          </li>
+          <li>
+            <a
+              href="/dashboard/list-livre-public"
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+            >
+              Livres publics
+            </a>
+          </li>
+          {user?.role === "admin" && (
+            <li>
+              <a
+                href="/dashboard/ajouter-livre"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Ajouter un livre
+              </a>
+            </li>
+          )}
+        </ul>
+      </nav>
+    </div>
 
           {/* Main Content */}
           <Outlet></Outlet>

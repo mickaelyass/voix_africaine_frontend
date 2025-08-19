@@ -4,6 +4,8 @@ import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const AjoutChapitre = () => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -12,7 +14,7 @@ const AjoutChapitre = () => {
  const navigate=useNavigate()
   const formik = useFormik({
     initialValues: {
-      id: '',
+      id: uuidv4(),
       titre: '',
       numero: '',
       contenu_texte: '',
@@ -51,6 +53,9 @@ const AjoutChapitre = () => {
       }
     },
   });
+  const regenerateId = () => {
+    formik.setFieldValue('id', uuidv4());
+  };
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg">
@@ -58,15 +63,34 @@ const AjoutChapitre = () => {
       <form onSubmit={formik.handleSubmit} className="space-y-4">
 
         <div>
-          <label className="block font-medium">ID du chapitre</label>
+                  <input
+              name="id"
+              type="text"
+              className="w-full border border-gray-300 p-2 rounded pr-16 uuid-input bg-gray-50"
+              value={formik.values.id}
+              onChange={formik.handleChange}
+              readOnly
+            />
+            <button
+              type="button"
+              onClick={regenerateId}
+              className="absolute right-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              Générer
+            </button>
+          {formik.errors.id && <p className="text-red-500 text-sm">{formik.errors.id}</p>}
+        </div>
+
+        <div>
+          <label className="block font-medium">Numéro</label>
           <input
-            name="id"
-            type="text"
+            name="numero"
+            type="number"
             className="w-full border border-gray-300 p-2 rounded"
-            value={formik.values.id}
+            value={formik.values.numero}
             onChange={formik.handleChange}
           />
-          {formik.errors.id && <p className="text-red-500 text-sm">{formik.errors.id}</p>}
+          {formik.errors.numero && <p className="text-red-500 text-sm">{formik.errors.numero}</p>}
         </div>
 
         <div>
@@ -81,17 +105,7 @@ const AjoutChapitre = () => {
           {formik.errors.titre && <p className="text-red-500 text-sm">{formik.errors.titre}</p>}
         </div>
 
-        <div>
-          <label className="block font-medium">Numéro</label>
-          <input
-            name="numero"
-            type="number"
-            className="w-full border border-gray-300 p-2 rounded"
-            value={formik.values.numero}
-            onChange={formik.handleChange}
-          />
-          {formik.errors.numero && <p className="text-red-500 text-sm">{formik.errors.numero}</p>}
-        </div>
+        
 
         <div>
           <label className="block font-medium">Contenu texte</label>
