@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AudioRecorderUploader from './AudioRecorderUploader';
 import axios from 'axios';
 
@@ -8,31 +8,35 @@ const ListeChapitres = ({ chapitres, user, onTogglePublic, onDelete }) => {
   const [nouveauCommentaire, setNouveauCommentaire] = useState('');
   const [timestamp, setTimestamp] = useState(0);
   const token = localStorage.getItem('access_token');
- const API_URL = process.env.REACT_APP_API_URL;
-  useEffect(() => {
-    if (chapitreActif) {
-      chargerCommentaires();
-    }
-  }, [chapitreActif]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  const handleSelectChapitre = (chapitre) => {
-    setChapitreActif(chapitre);
-    setCommentaires([]);
-  };
-
-  const chargerCommentaires = async () => {
+  // --- Stabiliser la fonction avec useCallback ---
+  const chargerCommentaires = useCallback(async () => {
+    if (!chapitreActif) return;
     try {
       const response = await axios.get(
-        `${API_URL}/commentaires/?chapitre_id=${chapitreActif?.id}`,
+        `${API_URL}/commentaires/?chapitre_id=${chapitreActif.id}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      console.log("commentaires",response.data);
+      console.log("commentaires", response.data);
       setCommentaires(response.data);
     } catch (error) {
       console.error("Erreur lors du chargement des commentaires", error);
     }
+  }, [chapitreActif, API_URL, token]);
+
+  // --- Charger commentaires quand le chapitre change ---
+  useEffect(() => {
+    if (chapitreActif) {
+      chargerCommentaires();
+    }
+  }, [chapitreActif, chargerCommentaires]);
+
+  const handleSelectChapitre = (chapitre) => {
+    setChapitreActif(chapitre);
+    setCommentaires([]); // Reset des commentaires avant le rechargement
   };
 
   const handleAjouterCommentaire = async (e) => {
@@ -40,26 +44,20 @@ const ListeChapitres = ({ chapitres, user, onTogglePublic, onDelete }) => {
     if (!nouveauCommentaire.trim()) return;
 
     try {
-      console.log({
-          "contenu": nouveauCommentaire,
-          "timestamp": timestamp,
-          "chapitre_id": chapitreActif?.id,  // Ajouté
-          "user_id": user?.id              // Ajouté
-        })
       await axios.post(
         `${API_URL}/commentaires`,
         {
           contenu: nouveauCommentaire,
           timestamp: timestamp,
-          chapitre_id: chapitreActif?.id,  // Ajouté
-          user_id: user?.id              // Ajouté
+          chapitre_id: chapitreActif?.id,
+          user_id: user?.id
         },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
       setNouveauCommentaire('');
-      chargerCommentaires(); // Recharger les commentaires
+      chargerCommentaires(); // Recharge après ajout
     } catch (error) {
       console.error("Erreur lors de l'ajout du commentaire", error);
     }
