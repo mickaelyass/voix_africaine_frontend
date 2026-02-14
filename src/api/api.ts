@@ -1,7 +1,9 @@
 import axios from 'axios';
-
+const API_URL = process.env.REACT_APP_API_URL;
 const api = axios.create({
-  baseURL: 'https://voix-africaine.onrender.com',
+  //baseURL: 'https://voix-africaine.onrender.com',
+   baseURL: API_URL,
+   withCredentials: true,
 });
 
 // Intercepteur pour ajouter le token
