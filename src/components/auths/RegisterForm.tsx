@@ -55,7 +55,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
       <CForm onSubmit={formik.handleSubmit}>
         <div className="mb-4">
           <label htmlFor="full_name" className="block text-gray-700 mb-1">
-            Nom complet
+            Nom et prenoms
           </label>
           <CFormInput
             id="full_name"
