@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ListeChapitres from './ListeChapitres';
@@ -11,89 +11,68 @@ const LivreDetail = () => {
   const [chapitres, setChapitres] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('access_token');
+
   const fetchLivre = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/livres/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(API_URL + '/livres/' + id, { headers: { Authorization: 'Bearer ' + token } });
       setLivre(res.data);
-    } catch (error) {
-      console.error('Erreur lors de la récupération du livre :', error);
-    }
-  }, [id, token,API_URL]);
+    } catch (error) { console.error(error); }
+  }, [id, token, API_URL]);
 
   const fetchChapitres = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/chapitres/livre/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(API_URL + '/chapitres/livre/' + id, { headers: { Authorization: 'Bearer ' + token } });
       setChapitres(res.data);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des chapitres :', error);
-    }
-  }, [id, token,API_URL]);
+    } catch (error) { console.error(error); }
+  }, [id, token, API_URL]);
 
-     const deleteChapitre = async (chapitreId) => {
-    if (!window.confirm("Confirmer la suppression de ce chapitre ?")) return;
+  const deleteChapitre = async (chapitreId) => {
+    if (!window.confirm('Confirmer la suppression de ce chapitre ?')) return;
     try {
-      await axios.delete(`${API_URL}/chapitres/${chapitreId}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(API_URL + '/chapitres/' + chapitreId, { headers: { Authorization: 'Bearer ' + token } });
       fetchChapitres();
-    } catch (error) {
-      console.error("Erreur lors de la suppression :", error.response?.data || error);
-    }
+    } catch (error) { console.error(error.response?.data || error); }
   };
 
-
-  useEffect(() => {
-    fetchLivre();
-    fetchChapitres();
-  }, [fetchChapitres, fetchLivre]);
-
+  useEffect(() => { fetchLivre(); fetchChapitres(); }, [fetchChapitres, fetchLivre]);
 
   const toggleChapitrePublic = async (chapitreId) => {
-  try {
-    await axios.patch(`${API_URL}/chapitres/${chapitreId}/toggle-public`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`, // si tu utilises JWT
-      },
-    });
-    // Recharger les chapitres après mise à jour
-    fetchChapitres();
-  } catch (error) {
-    console.error("Erreur lors du changement de visibilité :", error.response?.data || error);
-  }
-};
+    try {
+      await axios.patch(API_URL + '/chapitres/' + chapitreId + '/toggle-public', {}, { headers: { Authorization: 'Bearer ' + token } });
+      fetchChapitres();
+    } catch (error) { console.error(error.response?.data || error); }
+  };
 
-
-  if (!livre) return <p className="text-center text-gray-500 mt-8">Chargement du livre...</p>;
+  if (!livre) return <div className="py-16 text-center text-ink-700/60">Chargement du livre...</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-white shadow-xl rounded-xl p-6 mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">{livre.titre}</h2>
-        <p className="text-lg text-gray-600 mb-4 italic">Auteur : {livre.auteur}</p>
-        <p className="text-gray-700">{livre.description || "Pas de description disponible."}</p>
-
-        {user?.role === 'admin' && livre?.id && (
-          <div className="mt-4">
-            <a
-              href={`/dashboard/livres/${livre.id}/ajouter-chapitre`}
-              className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition duration-200 inline-block"
-            >
-              + Ajouter un chapitre
-            </a>
+    <div className="space-y-6">
+      <Link to="/dashboard/list-livre-public" className="text-sm font-bold text-brand-600 hover:underline">Retour au catalogue</Link>
+      <section className="relative overflow-hidden rounded-3xl bg-ink-950 text-white">
+        <div className="hero-vignette absolute inset-0" />
+        <div className="pattern-kente absolute inset-0 opacity-20" />
+        <div className="relative flex flex-col gap-6 p-6 sm:p-8 lg:flex-row">
+          <span className="relative grid h-44 w-36 shrink-0 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-brand-500 to-brand-800 font-display text-6xl font-black shadow-2xl ring-1 ring-white/20">
+            <span className="cover-spine absolute inset-0" />{(livre.titre || 'V').slice(0, 1).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="badge-gold badge">Livre audio</span>
+              <span className="badge rounded-full bg-white/10 text-white/80">{chapitres.length} chapitre(s)</span>
+            </div>
+            <h1 className="mt-3 font-display text-3xl font-black leading-tight sm:text-4xl">{livre.titre}</h1>
+            <p className="mt-1 text-sm font-bold uppercase tracking-[0.18em] text-gold-300">{livre.auteur}</p>
+            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70">{livre.description || 'Pas de description disponible.'}</p>
+            {/* Tout utilisateur connecte peut creer un chapitre, puis
+                l'enregistrer au micro depuis la fiche du livre. Seules les
+                actions de suppression restent reservees aux administrateurs. */}
+            {livre?.id && user && (
+              <Link to={'/dashboard/livres/' + livre.id + '/ajouter-chapitre'} className="btn-primary mt-5">+ Ajouter un chapitre</Link>
+            )}
           </div>
-        )}
-      </div>
-
-     <ListeChapitres chapitres={chapitres} user={user} onDelete={deleteChapitre}  onTogglePublic={toggleChapitrePublic} />
-
+        </div>
+      </section>
+      <ListeChapitres chapitres={chapitres} user={user} onDelete={deleteChapitre} onTogglePublic={toggleChapitrePublic} onChapitresUpdated={fetchChapitres} />
     </div>
   );
 };

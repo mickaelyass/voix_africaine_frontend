@@ -1,3 +1,72 @@
+# Voix Africaine — Frontend
+
+Application React (Create React App, TypeScript + JavaScript) qui consomme l'API
+FastAPI du dossier `../voix_africaine`.
+
+## Configuration locale
+
+L'URL de l'API est lue depuis `REACT_APP_API_URL` (fichier `.env`, à la racine
+de ce projet). Pour un environnement **local** :
+
+```env
+REACT_APP_API_URL=http://localhost:8000
+```
+
+Un modèle est fourni : `cp .env.example .env`.
+
+> ⚠️ **CORS** : l'API n'autorise que `http://localhost:3000` et
+> `https://voixafricaine.netlify.app` (`app/middleware.py`). Si vous changez le
+> port du frontend (`PORT=3001 npm start`), ajoutez l'origine correspondante
+> côté backend, sinon le navigateur bloquera les requêtes.
+
+## Démarrer l'ensemble (backend + frontend)
+
+```bash
+# Terminal 1 — API + MongoDB local
+cd ../voix_africaine
+env/bin/python -m scripts.init_db      # une seule fois : index + admin par défaut
+./scripts/run_dev.sh                   # http://127.0.0.1:8000
+
+# Terminal 2 — frontend
+cd ../voix_africaine_frontend
+npm install
+npm start                              # http://localhost:3000
+```
+
+Compte administrateur créé par défaut : `admin@voixafricaine.com` / `Admin@Voix2026`
+(voir `voix_africaine/readme.md`).
+
+## Vérifier la liaison avec l'API
+
+```bash
+cd ../voix_africaine
+env/bin/python -m scripts.smoke_test
+```
+
+## Scripts disponibles
+
+| Commande | Effet |
+|----------|-------|
+| `npm start` | Serveur de développement sur <http://localhost:3000> |
+| `npm run build` | Build de production dans `build/` |
+| `npm test` | Tests (mode watch) |
+| `npx tsc --noEmit` | Vérification des types TypeScript |
+
+## Routes de l'application
+
+| Route | Composant | Accès |
+|-------|-----------|-------|
+| `/` | `HomePage` | public |
+| `/login` | `LoginPage` | public |
+| `/register` | `RegisterPage` | public |
+| `/dashboard` | `DashboardPage` (layout) | connecté |
+| `/dashboard/ajouter-livre` | `AddLivrePage` | admin |
+| `/dashboard/list-livre-public` | `ListeLivre` | connecté |
+| `/dashboard/livre/:id` | `LivreDetail` | connecté |
+| `/dashboard/livres/:livreId/ajouter-chapitre` | `AjoutChapitre` | admin |
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

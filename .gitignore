@@ -13,11 +13,15 @@
 
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# ============ SECRETS — jamais sur GitHub ============
+# Le .env réel (dev local) et toutes ses variantes restent locaux.
+# En production (Vercel/Netlify/Render...), renseigner REACT_APP_API_URL
+# directement dans le dashboard — aucun fichier .env n'est envoyé.
+.env
+.env.*
+!.env.example
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+

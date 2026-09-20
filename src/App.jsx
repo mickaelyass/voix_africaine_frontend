@@ -20,8 +20,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Routes protégées */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />}>
               <Route index element={<DashboardHome />} />
@@ -29,7 +27,6 @@ function App() {
               <Route path="list-livre-public" element={<ListeLivre />} />
               <Route path="livre/:id" element={<LivreDetail />} />
               <Route path="livres/:livreId/ajouter-chapitre" element={<AjoutChapitre />} />
-
             </Route>
           </Route>
         </Routes>
